@@ -15,7 +15,7 @@ onlineUsers = []
 @app.get("/")
 async def test_get():
     res = {}
-    res['detail'] = 'It just works'
+    res['detail'] = 'It just works with auto deploy on main push ;)'
     return res
 
 @app.get("/api/chatrooms", response_model=list[GetChatroom])
