@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: superfly/flyctl-actions/setup-flyctl@master
-    - run: flyctl deploy --dockerfile ./docker/Dockerfile --remote-only 
+    - run: flyctl deploy --config ./fly_db.toml --dockerfile ./Dockerfile_db --remote-only 
   deploy_app:
     name: Deploy chatter.io backend
     runs-on: ubuntu-latest
@@ -23,4 +23,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: superfly/flyctl-actions/setup-flyctl@master
-    - run: flyctl deploy --dockerfile ./Dockerfile --remote-only 
+    - run: flyctl deploy --config ./fly_app.toml --dockerfile ./Dockerfile_app --remote-only 
