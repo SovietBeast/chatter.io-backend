@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  dawn-water-5378.internal:
+    image: postgres
+    restart: always
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment: 
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./docker/schema/:/docker-entrypoint-initdb.d/
+  
+  backend:
+    build: .
+    ports:
+      - "8000:8080"
+    restart: unless-stopped
