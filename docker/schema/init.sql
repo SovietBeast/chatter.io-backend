@@ -29,3 +29,7 @@ CREATE TABLE messages (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (chatroom_id) REFERENCES chatrooms(chatroom_id)
 );
+
+CREATE TABLE test(
+    test_id SERIAL NOT NULL
+)

@@ -1,0 +1,10 @@
+# fly.toml file generated for dawn-water-5378 on 2022-10-12T23:56:50+02:00
+
+app = "dawn-water-5378"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[experimental]
+  allowed_public_ports = [5432]
+  auto_rollback = true
