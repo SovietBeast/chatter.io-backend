@@ -19,7 +19,7 @@ jobs:
   deploy_app:
     name: Deploy chatter.io backend
     runs-on: ubuntu-latest
-    needs: deploy_db
+    #needs: deploy_db
     steps:
     - uses: actions/checkout@v2
     - uses: superfly/flyctl-actions/setup-flyctl@master
