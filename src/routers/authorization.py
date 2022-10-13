@@ -29,7 +29,7 @@ authRouter = APIRouter(
 )
 
 
-@authRouter.post("/register", response_model=GetUser, status_code=status.HTTP_201_CREATED)
+@authRouter.post("/register", status_code=status.HTTP_201_CREATED)
 async def create_new_user(data: User):
     user = conn.execute(users.select().where(or_(users.c.username == data.username, users.c.email == data.email))).fetchone()
     if user:

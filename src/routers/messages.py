@@ -14,13 +14,10 @@ messageRouter = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
-@messageRouter.post("/", response_model=GetMessage, status_code=status.HTTP_201_CREATED)
+@messageRouter.post("/", status_code=status.HTTP_201_CREATED)
 async def create_new_message(message: Message):
     insertedMessage = conn.execute(messages.insert().values(
         message_text=message.message_text,
         user_id=message.user_id,
         chatroom_id=message.chatroom_id
     ))
-    message = dict(message)
-    message['message_id'] = insertedMessage.inserted_primary_key[0]
-    return message
