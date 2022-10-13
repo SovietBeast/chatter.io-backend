@@ -5,22 +5,22 @@ env:
 on:
   push:
     branches:
-      - main
+      - database
 
 jobs: 
-  # deploy_db:
-  #   name: Deploy chatter.io database
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: superfly/flyctl-actions/setup-flyctl@master
-  #   - run: flyctl deploy --config ./fly_db.toml --dockerfile ./Dockerfile_db --remote-only 
-  deploy_app:
-    name: Deploy chatter.io backend
+  deploy_db:
+    name: Deploy chatter.io database
     runs-on: ubuntu-latest
-    needs: deploy_db
+
     steps:
     - uses: actions/checkout@v2
     - uses: superfly/flyctl-actions/setup-flyctl@master
-    - run: flyctl deploy --config ./fly_app.toml --dockerfile ./Dockerfile_app --remote-only 
+    - run: flyctl deploy --config ./fly_db.toml --dockerfile ./Dockerfile_db --remote-only 
+  # deploy_app:
+  #   name: Deploy chatter.io backend
+  #   runs-on: ubuntu-latest
+  #   needs: deploy_db
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: superfly/flyctl-actions/setup-flyctl@master
+  #   - run: flyctl deploy --config ./fly_app.toml --dockerfile ./Dockerfile_app --remote-only 
