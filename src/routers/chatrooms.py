@@ -27,7 +27,7 @@ async def get_chatroom_by_id(id: int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chatroom not found")
     return result
 
-@chatRouter.post("/", response_model=GetChatroom)
+@chatRouter.post("/", response_model=GetChatroom, status_code=status.HTTP_201_CREATED)
 async def create_new_chatroom(chat: Chatroom):
     insertedChat = conn.execute(chatrooms.insert().values(
         name=chat.name,
