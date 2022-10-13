@@ -1,3 +1,4 @@
+from http.client import responses
 from fastapi import (
     APIRouter, 
     Depends,
@@ -8,6 +9,7 @@ from schemas.schemas import Chatroom, GetChatroom, GetMessage
 from models.models import chatrooms, messages
 from utils.utils import get_current_user
 from config.database import conn
+from fastapi.responses import Response
 
 chatRouter = APIRouter(
     prefix='/api/chatrooms',
@@ -27,9 +29,9 @@ async def get_chatroom_by_id(id: int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Chatroom not found")
     return result
 
-@chatRouter.post("/", status_code=status.HTTP_201_CREATED)
+@chatRouter.post("/", status_code=status.HTTP_201_CREATED, response_class=Response)
 async def create_new_chatroom(chat: Chatroom):
-    insertedChat = conn.execute(chatrooms.insert().values(
+    conn.execute(chatrooms.insert().values(
         name=chat.name,
         private=chat.private,
         passcode=chat.passcode

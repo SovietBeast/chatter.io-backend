@@ -22,14 +22,15 @@ from sqlalchemy import or_
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from config.database import conn
+from fastapi.responses import Response
 
 authRouter = APIRouter(
     prefix='/api',
-    tags=["auth"]
+    tags=["auth"],
 )
 
 
-@authRouter.post("/register", status_code=status.HTTP_201_CREATED)
+@authRouter.post("/register", status_code=status.HTTP_201_CREATED, response_class=Response)
 async def create_new_user(data: User):
     user = conn.execute(users.select().where(or_(users.c.username == data.username, users.c.email == data.email))).fetchone()
     if user:
@@ -40,6 +41,7 @@ async def create_new_user(data: User):
             email=data.email,
             password=hashPassword(data.password)
         ))
+
 
 @authRouter.post("/login", response_model=Token)
 async def login(data: OAuth2PasswordRequestForm = Depends()):
