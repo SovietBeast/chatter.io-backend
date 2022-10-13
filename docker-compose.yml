@@ -12,7 +12,9 @@ services:
       - ./docker/schema/:/docker-entrypoint-initdb.d/
   
   backend:
-    build: .
+    build:
+      context: ./
+      dockerfile: Dockerfile_app 
     ports:
       - "8000:8080"
     restart: unless-stopped
