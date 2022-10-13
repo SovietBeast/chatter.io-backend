@@ -29,7 +29,7 @@ authRouter = APIRouter(
 )
 
 
-@authRouter.post("/register", response_model=GetUser)
+@authRouter.post("/register", response_model=GetUser, status_code=status.HTTP_201_CREATED)
 async def create_new_user(data: User):
     user = conn.execute(users.select().where(or_(users.c.username == data.username, users.c.email == data.email))).fetchone()
     if user:
@@ -40,10 +40,6 @@ async def create_new_user(data: User):
             email=data.email,
             password=hashPassword(data.password)
         ))
-        user = conn.execute(users.select().where(users.c.username == data.username)).fetchone()
-        resp = dict(data)
-        resp["user_id"] = user.user_id 
-        return resp
 
 @authRouter.post("/login", response_model=Token)
 async def login(data: OAuth2PasswordRequestForm = Depends()):
