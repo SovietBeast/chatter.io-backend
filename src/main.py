@@ -34,12 +34,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/")
-async def test_get():
-    res = {}
-    res['detail'] = 'It just works with auto deploy on main push ;)'
-    return res
-
 # @app.websocket("/ws")
 # async def websocket_endpoint(websocket: WebSocket):
 #     await websocket.accept()
