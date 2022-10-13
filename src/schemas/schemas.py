@@ -40,3 +40,7 @@ class GetMessage(BaseModel):
     message_text: str 
     user_id: int
     chatroom_id: int
+
+class TokenData(BaseModel):
+    username: str = None
+    user_id: int

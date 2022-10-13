@@ -2,12 +2,13 @@ from datetime import timedelta
 from fastapi import FastAPI, HTTPException, status, Depends, WebSocket
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from config.database import conn
-from models.models import chatrooms, users, messages
-from schemas.schemas import Chatroom, GetChatroom, User, GetUser, Message, GetMessage, Token
-from utils.utils import hashPassword, createAccessToken, verifyPassword, TOKEN_EXPIRE_TIME
+from models.models import *
+from schemas.schemas import *
+from utils.utils import *
 from sqlalchemy import or_
+from jose.exceptions import JWTError
 
-oauth2Scheme = OAuth2PasswordBearer(tokenUrl="api/login")
+
 app = FastAPI()
 onlineUsers = []
 
@@ -58,7 +59,7 @@ async def create_new_user(data: User):
         return resp
 
 @app.get("/api/users", response_model=list[GetUser])
-async def get_all_user():
+async def get_all_user(current_user: User = Depends(get_current_user)):
     return conn.execute(users.select()).fetchall()
 
 @app.post("/api/login", response_model=Token)
