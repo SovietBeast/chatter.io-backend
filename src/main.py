@@ -9,15 +9,28 @@ from utils.utils import *
 from sqlalchemy import or_
 from jose.exceptions import JWTError
 from routers import authorization, users, chatrooms, messages
+from fastapi.middleware.cors import CORSMiddleware
 
+onlineUsers = []
 
 app = FastAPI()
 app.include_router(authorization.authRouter)
 app.include_router(users.userRouter)
 app.include_router(chatrooms.chatRouter)
 app.include_router(messages.messageRouter)
-onlineUsers = []
 
+origins = [
+    "http://localhost",
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
 async def test_get():
