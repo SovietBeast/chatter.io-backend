@@ -44,3 +44,11 @@ class GetMessage(BaseModel):
 class TokenData(BaseModel):
     username: str = None
     user_id: int
+
+class UserChatrooms(BaseModel):
+    user_id: int = ...
+    chat_id: int = ...
+
+class GetUserChatrooms(BaseModel):
+    chat_id: int
+    private: bool

@@ -9,13 +9,16 @@ CREATE TABLE users (
     PRIMARY KEY (user_id)
 );
 
+
 -- chatrooms 1:M users
 CREATE TABLE chatrooms (
     chatroom_id SERIAL NOT NULL,
+    user_id int NOT NULL,
     name varchar(255) NOT NULL,
     private boolean NOT NULL,
     passcode varchar(255),
-    PRIMARY KEY (chatroom_id)
+    PRIMARY KEY (chatroom_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 -- message M:1 users
@@ -30,6 +33,11 @@ CREATE TABLE messages (
     FOREIGN KEY (chatroom_id) REFERENCES chatrooms(chatroom_id)
 );
 
-CREATE TABLE test(
-    test_id SERIAL NOT NULL
-)
+CREATE TABLE users_chats (
+    row_id SERIAL NOT NULL,
+    user_id int NOT NULL,
+    chat_id int NOT NULL,
+    PRIMARY KEY (row_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (chat_id) REFERENCES chatrooms(chatroom_id)
+);

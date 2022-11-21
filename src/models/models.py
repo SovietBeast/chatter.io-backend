@@ -1,4 +1,3 @@
-import string
 from tokenize import String
 from xmlrpc.client import Boolean
 from sqlalchemy import Table, Column, ForeignKey
@@ -11,6 +10,7 @@ from config.database import meta
 chatrooms = Table(
     'chatrooms', meta,
     Column('chatroom_id', Integer, primary_key=True, nullable=False),
+    Column('user_id', Integer, ForeignKey('users.user_id')),
     Column('name', String(255), nullable=False),
     Column('private', Boolean, nullable=False),
     Column('passcode', String(255))
@@ -31,4 +31,11 @@ users = Table(
     Column('username', String(255), nullable=False),
     Column('password', String(255), nullable=False),
     Column('email', String(255), nullable=False),
+)
+
+users_chat = Table(
+    'users_chats', meta,
+    Column('row_id', Integer, primary_key=True, nullable=False),
+    Column('user_id', Integer, ForeignKey('users.user_id')),
+    Column('chat_id', Integer, ForeignKey('chatrooms.chatroom_id')),
 )
