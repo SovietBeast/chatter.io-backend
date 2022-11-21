@@ -31,6 +31,8 @@ async def get_chatroom_by_id(id: int):
 
 @chatRouter.post("/", status_code=status.HTTP_201_CREATED, response_class=Response)
 async def create_new_chatroom(chat: Chatroom):
+    if len(chat.name) <= 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Chatroom name must not be empty!")
     conn.execute(chatrooms.insert().values(
         name=chat.name,
         private=chat.private,
