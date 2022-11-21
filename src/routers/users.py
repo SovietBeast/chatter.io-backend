@@ -25,14 +25,14 @@ userRouter = APIRouter(
 async def get_all_user():
     return conn.execute(users.select()).fetchall()
 
-@userRouter.get("/self")
+@userRouter.get("/self", response_model=GetUser)
 async def get_user_self(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     payload = decode_user_token(token)
-    token_data = TokenData(username=payload.get("username"), user_id = payload.get("user_id"))
-    return token_data
+    #token_data = TokenData(username=payload.get("username"), user_id = payload.get("user_id"))
+    return conn.execute(users.select().where(users.c.user_id == payload.get("user_id"))).fetchone()
 
 @userRouter.post("/add/chatroom", response_class=Response)
-async def add_user_to_chatroom(chatroom_id: int, token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
+async def add_user_to_chatroom(user: GetUser,chatroom_id: int, token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     usr_object = await get_current_user(token)
     us = UserChatrooms(user_id=usr_object.user_id, chat_id=chatroom_id)    
     conn.execute(users_chat.insert().values(
