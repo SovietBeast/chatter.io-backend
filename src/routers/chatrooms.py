@@ -5,8 +5,12 @@ from fastapi import (
     HTTPException, 
     status
     )
+from models.models import (
+    chatrooms, 
+    messages, 
+    users_chat
+    )
 from schemas.schemas import Chatroom, GetChatroom, GetMessage
-from models.models import chatrooms, messages
 from utils.utils import get_current_user
 from config.database import conn
 from fastapi.responses import Response
@@ -35,12 +39,17 @@ async def create_new_chatroom(chat: Chatroom, token: str = Depends(OAuth2Passwor
     if len(chat.name) <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Chatroom name must not be empty!")
     user = await get_current_user(token)
-    conn.execute(chatrooms.insert().values(
+    created_chat = conn.execute(chatrooms.insert().values(
         user_id = user.user_id,
         name=chat.name,
         private=chat.private,
         passcode=chat.passcode
     ))
+
+    conn.execute(users_chat.insert().values(
+        user_id=user.user_id,
+        chat_id=created_chat.inserted_primary_key[0]
+     ))
 
     
 @chatRouter.get("/{chatroom_id}/messages", response_model=list[GetMessage])
