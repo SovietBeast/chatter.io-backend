@@ -15,7 +15,7 @@ messageRouter = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
-@messageRouter.post("/", status_code=status.HTTP_201_CREATED, response_class=Response)
+@messageRouter.post("", status_code=status.HTTP_201_CREATED, response_class=Response)
 async def create_new_message(message: Message):
     conn.execute(messages.insert().values(
         message_text=message.message_text,
