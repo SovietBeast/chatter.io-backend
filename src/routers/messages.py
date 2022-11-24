@@ -40,8 +40,7 @@ messageRouter = APIRouter(
 )
 
 @messageRouter.websocket("/ws")
-async def chat(websocket: WebSocket):
-    token = websocket.headers.get("Authorization").split()[-1]
+async def chat(websocket: WebSocket, token: str):
     user = await get_current_user(token)
     if user.username:
         await manager.connect(websocket, token)
