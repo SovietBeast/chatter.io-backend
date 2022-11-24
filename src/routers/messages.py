@@ -53,7 +53,7 @@ async def chat(websocket: WebSocket, token: str):
             while True:
                 data = await websocket.receive_json()
                 await manager.broadcast(data)
-        except WebSocketDisconnect:
+        except:
             manager.disconnect(websocket, token)
             response['message'] = "left"
             await manager.broadcast(response)
