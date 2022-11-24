@@ -1,5 +1,4 @@
 from datetime import timedelta
-import imp
 from fastapi import FastAPI, HTTPException, status, Depends, WebSocket
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from config.database import conn
@@ -10,7 +9,7 @@ from sqlalchemy import or_
 from jose.exceptions import JWTError
 from routers import authorization, users, chatrooms, messages
 from fastapi.middleware.cors import CORSMiddleware
-
+#==0.85.0
 onlineUsers = []
 
 app = FastAPI()
@@ -33,9 +32,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-# @app.websocket("/ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     await websocket.send_text("ELOSZKA")
-    
