@@ -9,7 +9,8 @@ from schemas.schemas import (
     GetUser,
     UserChatrooms,
     GetUserChatrooms,
-    GetChatroom
+    GetChatroom,
+    UserChatroom
     )
 from models.models import users, users_chat, chatrooms
 from utils.utils import get_current_user, decode_user_token
@@ -34,16 +35,16 @@ async def get_user_self(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/
 
 
 @userRouter.post("/add/chatroom",status_code=status.HTTP_201_CREATED, response_class=Response)
-async def add_user_to_chatroom(user: str ,chatroom_id: int, token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
+async def add_user_to_chatroom(userchat: UserChatroom, token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     user_admin = await get_current_user(token)
     chat_list =  conn.execute(chatrooms.select().where(chatrooms.c.user_id == user_admin.user_id)).fetchall()
     ids = [x[0] for x in chat_list]
-    if chatroom_id in ids:
-        user_to_add = conn.execute(users.select().where(users.c.username == user)).fetchone()
-        us = UserChatrooms(user_id=user_to_add.user_id, chat_id=chatroom_id) 
+    if userchat.chatroom_id in ids:
+        user_to_add = conn.execute(users.select().where(users.c.username == userchat.user)).fetchone()
+        #us = UserChatrooms(user_id=user_to_add.user_id, chat_id=userchat.chatroom_id) 
         conn.execute(users_chat.insert().values(
-            user_id=us.user_id,
-            chat_id=us.chat_id
+            user_id=user_to_add.user_id,
+            chat_id=userchat.chatroom_id
         ))
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only chatroom owner is able to do that")
