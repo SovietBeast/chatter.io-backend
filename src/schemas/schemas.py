@@ -8,13 +8,15 @@ from pydantic import BaseModel, Field, EmailStr
 class Chatroom(BaseModel):
     name: str = Field(..., max_length=255)
     private: bool = ...
-    passcode: str = Field(max_length=255)
 
 class GetChatroom(BaseModel):
     chatroom_id: int
     name: str
     private: bool
 
+class UserChatroom(BaseModel):
+    user: str
+    chatroom_id: int
 
 class User(BaseModel):
     username: str = Field(..., max_length=255)
