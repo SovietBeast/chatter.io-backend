@@ -27,6 +27,10 @@ chatRouter = APIRouter(
 async def get_all_chatrooms():
     return conn.execute(chatrooms.select()).fetchall()
 
+@chatRouter.get("/public", response_model=list[GetChatroom])
+async def get_public_chatrooms():
+    return conn.execute(chatrooms.select().where(chatrooms.c.private == 'f')).fetchall()
+
 @chatRouter.get("/{id}", response_model=GetChatroom)
 async def get_chatroom_by_id(id: int):
     result = conn.execute(chatrooms.select().where(chatrooms.c.chatroom_id == id)).fetchone()
@@ -43,7 +47,6 @@ async def create_new_chatroom(chat: Chatroom, token: str = Depends(OAuth2Passwor
         user_id = user.user_id,
         name=chat.name,
         private=chat.private,
-        passcode=chat.passcode
     ))
 
     conn.execute(users_chat.insert().values(

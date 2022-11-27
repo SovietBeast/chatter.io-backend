@@ -48,17 +48,15 @@ async def add_user_to_chatroom(userchat: UserChatroom, token: str = Depends(OAut
         ))
     else:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only chatroom owner is able to do that")
-    # usr_object = await get_current_user(token)
-    # us = UserChatrooms(user_id=usr_object.user_id, chat_id=chatroom_id)    
-    # conn.execute(users_chat.insert().values(
-    #     user_id=us.user_id, 
-    #     chat_id=us.chat_id
-    # ))
+
+
+
 @userRouter.get("/mychats", response_model=list[GetChatroom])
 async def get_mychats(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     user_admin = await get_current_user(token)
     chat_list =  conn.execute(chatrooms.select().where(chatrooms.c.user_id == user_admin.user_id)).fetchall()
     return chat_list
+
 
 @userRouter.get("/get/chatrooms", response_model=list[GetChatroom])
 async def get_user_chatrooms(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
@@ -67,5 +65,8 @@ async def get_user_chatrooms(token: str = Depends(OAuth2PasswordBearer(tokenUrl=
     ret = []
     for chat in user_chats_object:
         ret.append(dict(conn.execute(chatrooms.select().where(chatrooms.c.chatroom_id == chat.chat_id)).fetchone()))
+    public_chats = conn.execute(chatrooms.select().where(chatrooms.c.private == 'f')).fetchall()
+    for public in public_chats:
+        ret.append(dict(public))
     return ret
 

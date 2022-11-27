@@ -39,19 +39,24 @@ messageRouter = APIRouter(
     dependencies=[Depends(get_current_user)]
 )
 
-@messageRouter.websocket("/ws")
-async def chat(websocket: WebSocket, token: str):
+@messageRouter.websocket("/ws/{chat_id}")
+async def chat(websocket: WebSocket, token: str, chat_id: int):
     user = await get_current_user(token)
     if user.username:
         await manager.connect(websocket, token)
         response = {
-            "sender": user.username,
+            "username": user.username,
             "message": "got connected"
         }
         await manager.broadcast(response)
         try:
             while True:
                 data = await websocket.receive_json()
+                conn.execute(messages.insert().values(
+                    message_text=data.get("message"),
+                    user_id=user.user_id,
+                    chatroom_id=chat_id
+                ))
                 await manager.broadcast(data)
         except:
             manager.disconnect(websocket, token)
