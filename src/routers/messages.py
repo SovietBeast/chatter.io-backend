@@ -57,7 +57,11 @@ async def chat(websocket: WebSocket, token: str, chat_id: int):
                     user_id=user.user_id,
                     chatroom_id=chat_id
                 ))
-                await manager.broadcast(data)
+                response = {
+                    "username": user.username,
+                    "message": data.get("message")
+                }
+                await manager.broadcast(response)
         except:
             manager.disconnect(websocket, token)
             response['message'] = "left"
