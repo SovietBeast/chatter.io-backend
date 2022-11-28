@@ -38,10 +38,17 @@ async def get_user_self(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/
 async def add_user_to_chatroom(userchat: UserChatroom, token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     user_admin = await get_current_user(token)
     chat_list =  conn.execute(chatrooms.select().where(chatrooms.c.user_id == user_admin.user_id)).fetchall()
+    user_to_add_not_admin = conn.execute(users.select().where(users.c.username == userchat.user)).fetchone()
+    users_chat_list = conn.execute(users_chat.select().where(users_chat.c.user_id == user_to_add_not_admin.user_id)).fetchall()
     ids = [x[0] for x in chat_list]
     if userchat.chatroom_id in ids:
         user_to_add = conn.execute(users.select().where(users.c.username == userchat.user)).fetchone()
         #us = UserChatrooms(user_id=user_to_add.user_id, chat_id=userchat.chatroom_id) 
+        for uc_id in users_chat_list:
+            if user_to_add.user_id == uc_id[1] and userchat.chatroom_id == uc_id[2]:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User already in chatroom")
+            if  user_to_add_not_admin.user_id == uc_id[1] and userchat.chatroom_id == uc_id[2]:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User already in chatroom")
         conn.execute(users_chat.insert().values(
             user_id=user_to_add.user_id,
             chat_id=userchat.chatroom_id
@@ -61,7 +68,7 @@ async def get_mychats(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/lo
 @userRouter.get("/get/chatrooms", response_model=list[GetChatroom])
 async def get_user_chatrooms(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     usr_object =  await get_current_user(token)
-    user_chats_object =  conn.execute(users_chat.select().where(users_chat.c.user_id == usr_object.user_id)).fetchall()
+    user_chats_object =  conn.execute(users_chat.select().where(users_chat.c.user_id == usr_object.user_id and users_chat.c.chat_id == usr_object.chat_id)).fetchall()
     ret = []
     for chat in user_chats_object:
         ret.append(dict(conn.execute(chatrooms.select().where(chatrooms.c.chatroom_id == chat.chat_id)).fetchone()))
