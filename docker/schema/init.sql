@@ -23,7 +23,7 @@ CREATE TABLE chatrooms (
 
 -- message M:1 users
 -- message M:1 chatrooms
--- test
+-- test 2
 CREATE TABLE messages (
     message_id SERIAL NOT NULL,
     message_text TEXT NOT NULL,
