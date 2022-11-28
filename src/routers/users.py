@@ -17,6 +17,7 @@ from utils.utils import get_current_user, decode_user_token
 from config.database import conn
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import Response
+from sqlalchemy import and_
 
 userRouter = APIRouter(
     prefix='/api/users',
@@ -69,11 +70,14 @@ async def get_mychats(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/lo
 async def get_user_chatrooms(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     usr_object =  await get_current_user(token)
     user_chats_object =  conn.execute(users_chat.select().where(users_chat.c.user_id == usr_object.user_id and users_chat.c.chat_id == usr_object.chat_id)).fetchall()
-    ret = []
-    for chat in user_chats_object:
-        ret.append(dict(conn.execute(chatrooms.select().where(chatrooms.c.chatroom_id == chat.chat_id)).fetchone()))
-    public_chats = conn.execute(chatrooms.select().where(chatrooms.c.private == 'f')).fetchall()
-    for public in public_chats:
-        ret.append(dict(public))
-    return ret
+    test = conn.execute(chatrooms.select().join(users_chat)).fetchall()
+    return test
+    # print(test)
+    # ret = []
+    # for chat in user_chats_object:
+    #     ret.append(dict(conn.execute(chatrooms.select().where(chatrooms.c.chatroom_id == chat.chat_id)).fetchone()))
+    # public_chats = conn.execute(chatrooms.select().where(chatrooms.c.private == 'f')).fetchall()
+    # for public in public_chats:
+    #     ret.append(dict(public))
+    # return ret
 
