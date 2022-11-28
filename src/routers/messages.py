@@ -46,7 +46,7 @@ async def chat(websocket: WebSocket, token: str, chat_id: int):
         await manager.connect(websocket, token)
         response = {
             "username": user.username,
-            "message": "got connected"
+            "status": "got connected"
         }
         await manager.broadcast(response)
         try:
@@ -65,7 +65,7 @@ async def chat(websocket: WebSocket, token: str, chat_id: int):
         except Exception as e:
             print(e)
             manager.disconnect(websocket, token)
-            response['message'] = "left"
+            response['status'] = "left"
             await manager.broadcast(response)
 
 
