@@ -8,7 +8,8 @@ from fastapi import (
 from models.models import (
     chatrooms, 
     messages, 
-    users_chat
+    users_chat,
+    users
     )
 from schemas.schemas import Chatroom, GetChatroom, GetMessage
 from utils.utils import get_current_user
@@ -57,4 +58,10 @@ async def create_new_chatroom(chat: Chatroom, token: str = Depends(OAuth2Passwor
     
 @chatRouter.get("/{chatroom_id}/messages", response_model=list[GetMessage])
 async def get_all_messages_for_chatroom_id(chatroom_id: int):
-    return conn.execute(messages.select().where(messages.c.chatroom_id == chatroom_id)).fetchall()
+    chat_messages = conn.execute(messages.select().where(messages.c.chatroom_id == chatroom_id)).fetchall()
+    messages_list = []
+    for m in chat_messages:
+        user = conn.execute(users.select().where(users.c.user_id == m.user_id)).fetchone()
+        mess = GetMessage(message_id=m.message_id, message_text=m.message_text, user_id=m.user_id, chatroom_id=m.chatroom_id, username=user.username)
+        messages_list.append(mess)
+    return messages_list

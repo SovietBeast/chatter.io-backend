@@ -42,6 +42,7 @@ class GetMessage(BaseModel):
     message_text: str 
     user_id: int
     chatroom_id: int
+    username: str
 
 class TokenData(BaseModel):
     username: str = None
