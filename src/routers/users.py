@@ -69,8 +69,17 @@ async def get_mychats(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/lo
 @userRouter.get("/get/chatrooms", response_model=list[GetChatroom])
 async def get_user_chatrooms(token: str = Depends(OAuth2PasswordBearer(tokenUrl="api/login"))):
     usr_object =  await get_current_user(token)
-    #user_chats_object =  conn.execute(users_chat.select().where(users_chat.c.user_id == usr_object.user_id and users_chat.c.chat_id == usr_object.chat_id)).fetchall()
-    test = conn.execute(chatrooms.select().join(users_chat, isouter=True)).fetchall()
+    #user_chats_object =  conn.execute(users_chat.select().where(and_(users_chat.c.user_id == usr_object.user_id ))).fetchall()
+    all_chats = conn.execute(users_chat.select().where(users_chat.c.user_id == usr_object.user_id)).fetchall()
+    test = []
+    for chat in all_chats:
+         x= conn.execute(chatrooms.select().where(and_(chat.chat_id == chatrooms.c.chatroom_id, chatrooms.c.private == True))).fetchone()
+         if x == None:
+            continue
+         test.append(x)
+    test.extend(conn.execute(chatrooms.select().where(chatrooms.c.private == 'f')).fetchall())
+    #[test.append(x3) for x3 in x2]
+    print(test)
     return test
     # print(test)
     # ret = []
