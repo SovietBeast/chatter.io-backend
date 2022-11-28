@@ -62,20 +62,13 @@ async def chat(websocket: WebSocket, token: str, chat_id: int):
                     "message": data.get("message")
                 }
                 await manager.broadcast(response)
-        except:
+        except Exception as e:
+            print(e)
             manager.disconnect(websocket, token)
             response['message'] = "left"
             await manager.broadcast(response)
 
 
-# @messageRouter.websocket("/ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     token = websocket.headers.get("Authorization").split()[-1]
-#     if await get_current_user(token):
-#         while True:
-#             data = await websocket.receive_text()
-#             await websocket.send_text(f"Message text was: {token}")
 
 
 @messageRouter.post("", status_code=status.HTTP_201_CREATED, response_class=Response)
