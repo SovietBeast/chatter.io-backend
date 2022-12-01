@@ -9,7 +9,7 @@ from sqlalchemy import or_
 from jose.exceptions import JWTError
 from routers import authorization, users, chatrooms, messages
 from fastapi.middleware.cors import CORSMiddleware
-#==0.85.0
+
 onlineUsers = []
 
 app = FastAPI()
