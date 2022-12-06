@@ -11,7 +11,7 @@ from models.models import (
     users_chat,
     users
     )
-from schemas.schemas import Chatroom, GetChatroom, GetMessage
+from schemas.schemas import Chatroom, GetChatroom, GetMessage, GetUser
 from utils.utils import get_current_user
 from config.database import conn
 from fastapi.responses import Response
@@ -65,3 +65,15 @@ async def get_all_messages_for_chatroom_id(chatroom_id: int):
         mess = GetMessage(message_id=m.message_id, message_text=m.message_text, user_id=m.user_id, chatroom_id=m.chatroom_id, username=user.username)
         messages_list.append(mess)
     return messages_list
+
+
+@chatRouter.get("/{chatroom_id}/users", response_model=list[GetUser])
+async def get_all_users_in_chatroom(chatroom_id: int):
+    chat_users = conn.execute(users_chat.select().where(users_chat.c.chat_id == chatroom_id)).fetchall()
+    print(chat_users)
+    users_list = []
+    for u in chat_users:
+        us = conn.execute(users.select().where(users.c.user_id == u.user_id)).fetchone()
+        user = GetUser(user_id=us.user_id, username=us.username, email=us.email)
+        users_list.append(user)
+    return users_list
